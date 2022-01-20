@@ -1367,6 +1367,53 @@ void Bitmap::saveToFile(const char *filename)
     if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
+void Bitmap::invert()
+{
+    guardDisposed();
+    GUARD_MEGA;
+    if (!p->surface) 
+    {
+        p->allocSurface();
+        
+        FBO::bind(p->gl.fbo);
+        
+        glState.viewport.pushSet(IntRect(0, 0, width(), height()));
+        
+        gl.ReadPixels(0, 0, width(), height(), GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
+        
+        glState.viewport.pop();
+    }
+    
+
+    SDL_PixelFormat *fmt = p->format;
+    int w = p->gl.width, h = p->gl.height;
+    uint8_t invert[w * 4];
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+        uint32_t pixel = getPixelAt(p->surface, fmt, x, y);
+        Color c((pixel >> p->format->Rshift) & 0xFF,
+                (pixel >> p->format->Gshift) & 0xFF,
+                (pixel >> p->format->Bshift) & 0xFF,
+                (pixel >> p->format->Ashift) & 0xFF);
+        if (c.alpha == 0) {
+            invert[x * 4] = 0;
+            invert[x * 4 + 1] = 0;
+            invert[x * 4 + 2] = 0;
+            invert[x * 4 + 3] = 0;
+            continue;
+        }
+        invert[x * 4] = 255.0 - c.red;
+        invert[x * 4 + 1] = 255.0 - c.green;
+        invert[x * 4 + 2] = 255.0 - c.blue;
+        invert[x * 4 + 3] = c.alpha;
+        }
+        TEX::bind(p->gl.tex);
+        TEX::uploadSubImage(0, y, w, 1, &invert, GL_RGBA);
+    }
+    p->onModified();
+
+}
+
 void Bitmap::hueChange(int hue)
 {
     guardDisposed();
