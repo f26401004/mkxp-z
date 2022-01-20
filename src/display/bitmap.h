@@ -95,6 +95,7 @@ public:
     void replaceRaw(void *pixel_data, int size);
     void saveToFile(const char *filename);
 
+	void invert();
 	void hueChange(int hue);
 
 	enum TextAlign

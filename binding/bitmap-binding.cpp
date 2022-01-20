@@ -248,6 +248,15 @@ RB_METHOD(bitmapSetPixel) {
     return self;
 }
 
+RB_METHOD(bitmapInvert) {
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    GFX_GUARD_EXC(b->invert(););
+    
+    return self;
+}
+
+
 RB_METHOD(bitmapHueChange) {
     Bitmap *b = getPrivateData<Bitmap>(self);
     
@@ -764,6 +773,7 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "clear", bitmapClear);
     _rb_define_method(klass, "get_pixel", bitmapGetPixel);
     _rb_define_method(klass, "set_pixel", bitmapSetPixel);
+    _rb_define_method(klass, "invert", bitmapInvert);
     _rb_define_method(klass, "hue_change", bitmapHueChange);
     _rb_define_method(klass, "draw_text", bitmapDrawText);
     _rb_define_method(klass, "text_size", bitmapTextSize);
