@@ -919,6 +919,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
     switch (type) {
         case 0:
             glState.blendMode.pushSet(BlendNormal);
+            break;
         case 1:
             glState.blendMode.pushSet(BlendAddition);
             break;
@@ -973,9 +974,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
         p->popViewport();
     }
 
-    if (type != 0) {
-        glState.blendMode.pop();
-    }
+    glState.blendMode.pop();
     
     p->addTaintedArea(destRect);
     p->onModified();
