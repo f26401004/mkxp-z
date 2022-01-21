@@ -58,7 +58,7 @@ public:
 	         const Bitmap &source, IntRect rect,
 	         int opacity = 255);
 	
-	void blend_blt(int x, int y,
+	void blendBlt(int x, int y,
 	         const Bitmap &source, IntRect rect,
 	         int opacity = 255, int type = 0);
 

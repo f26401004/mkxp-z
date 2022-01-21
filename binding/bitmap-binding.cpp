@@ -147,7 +147,7 @@ RB_METHOD(bitmapBlendBlt) {
     src = getPrivateDataCheck<Bitmap>(srcObj, BitmapType);
     srcRect = getPrivateDataCheck<Rect>(srcRectObj, RectType);
     
-    GFX_GUARD_EXC(b->stretchBlt(x, y, *src, srcRect->toIntRect(), opacity, type););
+    GFX_GUARD_EXC(b->blendBlt(x, y, *src, srcRect->toIntRect(), opacity, type););
     
     return self;
 }

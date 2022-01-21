@@ -801,7 +801,7 @@ void Bitmap::blt(int x, int y,
                source, rect, opacity);
 }
 
-void Bitmap::blend_blt(int x, int y,
+void Bitmap::blendBlt(int x, int y,
                         const Bitmap &source, IntRect rect,
                         int opacity, int type)
 {
