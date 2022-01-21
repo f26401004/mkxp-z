@@ -57,10 +57,14 @@ public:
 	void blt(int x, int y,
 	         const Bitmap &source, IntRect rect,
 	         int opacity = 255);
+	
+	void blendBlt(int x, int y,
+	         const Bitmap &source, IntRect rect,
+	         int opacity = 255, int type = 0);
 
 	void stretchBlt(const IntRect &destRect,
 	                const Bitmap &source, const IntRect &sourceRect,
-	                int opacity = 255);
+	                int opacity = 255, int type = 0);
 
 	void fillRect(int x, int y,
 	              int width, int height,

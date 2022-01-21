@@ -801,9 +801,26 @@ void Bitmap::blt(int x, int y,
                source, rect, opacity);
 }
 
+void Bitmap::blendBlt(int x, int y,
+                        const Bitmap &source, IntRect rect,
+                        int opacity, int type)
+{
+    if (source.isDisposed())
+        return;
+
+    if (rect.x + rect.w > source.width())
+        rect.w = source.width() - rect.x;
+    
+    if (rect.y + rect.h > source.height())
+        rect.h = source.height() - rect.y;
+    
+    stretchBlt(IntRect(x, y, rect.w, rect.h),
+               source, rect, opacity, type);
+}
+
 void Bitmap::stretchBlt(const IntRect &destRect,
                         const Bitmap &source, const IntRect &sourceRect,
-                        int opacity)
+                        int opacity, int type)
 {
     guardDisposed();
     
@@ -897,6 +914,20 @@ void Bitmap::stretchBlt(const IntRect &destRect,
         p->onModified();
         return;
     }
+
+    // Set the blend state according to the type argument
+    switch (type) {
+        case 0:
+            glState.blendMode.pushSet(BlendNormal);
+        case 1:
+            glState.blendMode.pushSet(BlendAddition);
+            break;
+        case 2:
+            glState.blendMode.pushSet(BlendSubstraction);
+            break;
+        default:
+            glState.blendMode.pushSet(BlendNormal);
+    }
     
     if (opacity == 255 && !p->touchesTaintedArea(destRect))
     {
@@ -940,6 +971,10 @@ void Bitmap::stretchBlt(const IntRect &destRect,
         p->blitQuad(quad);
         
         p->popViewport();
+    }
+
+    if (type != 0) {
+        glState.blendMode.pop();
     }
     
     p->addTaintedArea(destRect);

@@ -129,6 +129,29 @@ RB_METHOD(bitmapBlt) {
     return self;
 }
 
+RB_METHOD(bitmapBlendBlt) {
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    int x, y;
+    VALUE srcObj;
+    VALUE srcRectObj;
+    int opacity = 255;
+    int type = 0;
+    
+    Bitmap *src;
+    Rect *srcRect;
+    
+    rb_get_args(argc, argv, "iioo|i", &x, &y, &srcObj, &srcRectObj,
+                &opacity, &type RB_ARG_END);
+    
+    src = getPrivateDataCheck<Bitmap>(srcObj, BitmapType);
+    srcRect = getPrivateDataCheck<Rect>(srcRectObj, RectType);
+    
+    GFX_GUARD_EXC(b->blendBlt(x, y, *src, srcRect->toIntRect(), opacity, type););
+    
+    return self;
+}
+
 RB_METHOD(bitmapStretchBlt) {
     Bitmap *b = getPrivateData<Bitmap>(self);
     
@@ -744,6 +767,7 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "height", bitmapHeight);
     _rb_define_method(klass, "rect", bitmapRect);
     _rb_define_method(klass, "blt", bitmapBlt);
+    _rb_define_method(klass, "blend_blt", bitmapBlendBlt);
     _rb_define_method(klass, "stretch_blt", bitmapStretchBlt);
     _rb_define_method(klass, "fill_rect", bitmapFillRect);
     _rb_define_method(klass, "clear", bitmapClear);
